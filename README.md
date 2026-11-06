@@ -1,5 +1,5 @@
 This Scoping and Discovery is a sales tool for the account team to easily navigate, and conslidate the scoping and discovery process.  
-Visit https://scoping-discovery.netlify.app
+Demo https://scoping-discovery.netlify.app
 Privacy Policy on PII: App does not capture nor save any personal identifiable information, such as email address nor name. 
 This app is for demonstration purposes only. 
 Log in/Testing: (No need to use your real name)
