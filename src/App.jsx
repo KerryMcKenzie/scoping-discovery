@@ -20,7 +20,7 @@ const ERP_OPTIONS = [
   'Microsoft Dynamics 365',
   'Workday Financials',
   'QuickBooks Enterprise',
-  'Other',
+  'Other Describe',
 ];
 
 const HR_OPTIONS = [
@@ -33,7 +33,7 @@ const HR_OPTIONS = [
   'Paycom',
   'Paylocity',
   'Rippling',
-  'Other',
+  'Other, Describe',
 ];
 
 const BANK_OPTIONS = [
@@ -288,16 +288,19 @@ const YesNo = ({ value, onChange }) => (
   </div>
 );
 
+// True for any "Other…" option (e.g. 'Other', 'Other, Describe')
+const isOther = (s) => typeof s === 'string' && s.startsWith('Other');
+
 // Component for ERP/HR/Bank-style selects that also need an "Other" free-text
 const SelectWithOther = ({ value = { selection: '', other: '' }, onChange, options, placeholder }) => (
   <div>
     <Select
       value={value.selection}
-      onChange={(sel) => onChange({ ...value, selection: sel, other: sel === 'Other' ? value.other : '' })}
+      onChange={(sel) => onChange({ ...value, selection: sel, other: isOther(sel) ? value.other : '' })}
       options={options}
       placeholder={placeholder}
     />
-    {value.selection === 'Other' && (
+    {isOther(value.selection) && (
       <div style={{ marginTop: '8px' }}>
         <TextInput
           value={value.other}
@@ -570,13 +573,16 @@ const LoginPage = ({ onLogin }) => {
             fontSize: '22px',
             fontWeight: 700,
             color: '#1a2b4a',
-            margin: '0 0 8px',
+            margin: '0 0 14px',
             letterSpacing: '-0.01em',
           }}>
             Discovery Tool
           </h1>
           <p style={{ fontSize: '14px', color: '#6b7a99', margin: 0 }}>
-            Sign in with your work account
+            Use Demo Credentials: User Test, user.test@company.com
+          </p>
+           <p style={{ fontSize: '14px', color: '#6b7a99', margin: 0 }}>
+            This is a simulated SSO login
           </p>
         </div>
 
@@ -1812,7 +1818,7 @@ const SummaryCard = ({ data, user }) => {
     if (!value || (Array.isArray(value) && value.length === 0)) return null;
     let display = value;
     if (typeof value === 'object' && !Array.isArray(value)) {
-      display = value.selection === 'Other' && value.other ? value.other : value.selection;
+      display = isOther(value.selection) && value.other ? value.other : value.selection;
     }
     if (Array.isArray(value)) display = value.join(', ');
     if (!display) return null;
@@ -1934,7 +1940,7 @@ const buildPrintableHtml = (data, user) => {
   const fmt = (v) => {
     if (!v) return '—';
     if (Array.isArray(v)) return v.join(', ') || '—';
-    if (typeof v === 'object') return v.selection === 'Other' && v.other ? v.other : (v.selection || '—');
+    if (typeof v === 'object') return isOther(v.selection) && v.other ? v.other : (v.selection || '—');
     return v;
   };
 
