@@ -309,11 +309,192 @@ const SelectWithOther = ({ value = { selection: '', other: '' }, onChange, optio
   </div>
 );
 
+// ---- Legal content (Privacy Policy / Terms of Use) --------------------------
+const LEGAL_UPDATED = 'November 6, 2026';
+
+const LEGAL_CONTENT = {
+  privacy: {
+    title: 'Privacy Policy',
+    sections: [
+      {
+        heading: 'Demo environment',
+        body: 'This Discovery Tool is a demonstration application. It is provided for testing and evaluation purposes only.',
+      },
+      {
+        heading: 'No personal information is collected or stored',
+        body: 'We do not capture, save, or transmit any Personally Identifiable Information (PII), such as your name or email address. Anything you type into this site stays in your browser only while the page is open and is cleared when you sign out, refresh, or close the tab. Nothing is sent to a server, database, or third party.',
+      },
+      {
+        heading: 'Use test details only',
+        body: 'Please do not enter real personal or company information. For demo testing, sign in with:',
+        demo: true,
+      },
+      {
+        heading: 'Cookies and tracking',
+        body: 'This site does not use cookies, analytics, or tracking technologies.',
+      },
+      {
+        heading: 'Exports',
+        body: 'If you export a PDF or JSON file, it is created locally in your browser and saved only to your own device.',
+      },
+    ],
+  },
+  terms: {
+    title: 'Terms of Use',
+    sections: [
+      {
+        heading: 'Demo purposes only',
+        body: 'This Discovery Tool is a demonstration application for testing and evaluation. It is not a production service.',
+      },
+      {
+        heading: 'Provided "as is"',
+        body: 'The site is provided "as is" without warranties of any kind. Features such as SSO sign-in and Salesforce attachment are simulated and do not connect to real systems.',
+      },
+      {
+        heading: 'Acceptable use',
+        body: 'Use only fictional or test data. Do not enter confidential, sensitive, or personal information.',
+      },
+      {
+        heading: 'No liability',
+        body: 'We are not liable for any loss or damage arising from your use of this demo, including any decisions made based on its output.',
+      },
+      {
+        heading: 'Changes',
+        body: 'These terms may be updated at any time. Continued use of the site means you accept the current version.',
+      },
+    ],
+  },
+};
+
+const LegalModal = ({ type, onClose }) => {
+  useEffect(() => {
+    const onKey = (e) => { if (e.key === 'Escape') onClose(); };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [onClose]);
+
+  const content = LEGAL_CONTENT[type];
+  if (!content) return null;
+
+  return (
+    <div
+      onClick={onClose}
+      style={{
+        position: 'fixed',
+        inset: 0,
+        background: 'rgba(10,31,74,0.45)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '16px',
+        zIndex: 100,
+      }}
+    >
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="legal-title"
+        onClick={(e) => e.stopPropagation()}
+        style={{
+          background: '#fff',
+          borderRadius: '12px',
+          width: '100%',
+          maxWidth: '520px',
+          maxHeight: '85vh',
+          overflowY: 'auto',
+          padding: '28px 28px 24px',
+          boxShadow: '0 20px 60px rgba(26,43,74,0.25)',
+          textAlign: 'left',
+        }}
+      >
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '4px' }}>
+          <h2 id="legal-title" style={{ fontSize: '19px', fontWeight: 700, color: '#1a2b4a', margin: 0 }}>
+            {content.title}
+          </h2>
+          <button
+            onClick={onClose}
+            aria-label="Close"
+            style={{
+              background: 'none',
+              border: 'none',
+              fontSize: '22px',
+              lineHeight: 1,
+              color: '#8a97b3',
+              cursor: 'pointer',
+              padding: '0 4px',
+            }}
+          >
+            ×
+          </button>
+        </div>
+        <p style={{ fontSize: '12px', color: '#8a97b3', margin: '0 0 18px' }}>
+          Last updated {LEGAL_UPDATED}
+        </p>
+
+        {content.sections.map((s) => (
+          <div key={s.heading} style={{ marginBottom: '16px' }}>
+            <h3 style={{ fontSize: '14px', fontWeight: 600, color: '#1a2b4a', margin: '0 0 4px' }}>
+              {s.heading}
+            </h3>
+            <p style={{ fontSize: '13px', lineHeight: 1.55, color: '#4a5878', margin: 0 }}>
+              {s.body}
+            </p>
+            {s.demo && (
+              <div style={{
+                marginTop: '8px',
+                background: '#f4f6fb',
+                border: '1px solid #e0e8f7',
+                borderRadius: '6px',
+                padding: '10px 12px',
+                fontSize: '13px',
+                color: '#1a2b4a',
+              }}>
+                <div><strong>Name:</strong> User Test</div>
+                <div><strong>Email:</strong> user.test@company.com</div>
+              </div>
+            )}
+          </div>
+        ))}
+
+        <button
+          onClick={onClose}
+          style={{
+            width: '100%',
+            marginTop: '4px',
+            padding: '10px',
+            background: 'linear-gradient(135deg, #0052D4 0%, #4364F7 50%, #6FB1FC 100%)',
+            color: '#fff',
+            border: 'none',
+            borderRadius: '6px',
+            fontSize: '14px',
+            fontWeight: 600,
+            cursor: 'pointer',
+          }}
+        >
+          Close
+        </button>
+      </div>
+    </div>
+  );
+};
+
+const legalLinkStyle = {
+  background: 'none',
+  border: 'none',
+  padding: 0,
+  color: '#4364F7',
+  fontSize: '12px',
+  cursor: 'pointer',
+  textDecoration: 'underline',
+  fontFamily: 'inherit',
+};
+
 // ---- Login Page -----------------------------------------------------------
 const LoginPage = ({ onLogin }) => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
+  const [legal, setLegal] = useState(null); // 'privacy' | 'terms' | null
 
   const canSubmit = name.trim().length > 1 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
@@ -400,11 +581,11 @@ const LoginPage = ({ onLogin }) => {
         </div>
 
         <Field label="Full Name" required>
-          <TextInput value={name} onChange={setName} placeholder="Test User" />
+          <TextInput value={name} onChange={setName} placeholder="User Test" />
         </Field>
 
         <Field label="Work Email" required>
-          <TextInput value={email} onChange={setEmail} placeholder="test.user@company.com" type="email" />
+          <TextInput value={email} onChange={setEmail} placeholder="user.test@company.com" type="email" />
         </Field>
 
         <button
@@ -439,8 +620,19 @@ const LoginPage = ({ onLogin }) => {
           textAlign: 'center',
         }}>
           Secured by Federated Identity · Demo Environment
+          <div style={{ marginTop: '10px' }}>
+            <button type="button" style={legalLinkStyle} onClick={() => setLegal('privacy')}>
+              Privacy Policy
+            </button>
+            <span style={{ margin: '0 8px' }}>·</span>
+            <button type="button" style={legalLinkStyle} onClick={() => setLegal('terms')}>
+              Terms of Use
+            </button>
+          </div>
         </div>
       </div>
+
+      {legal && <LegalModal type={legal} onClose={() => setLegal(null)} />}
     </div>
   );
 };
