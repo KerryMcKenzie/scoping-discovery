@@ -33,7 +33,7 @@ const HR_OPTIONS = [
   'Paycom',
   'Paylocity',
   'Rippling',
-  'Other',
+  'Other, Describe',
 ];
 
 const BANK_OPTIONS = [
