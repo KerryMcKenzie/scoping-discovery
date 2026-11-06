@@ -20,7 +20,7 @@ const ERP_OPTIONS = [
   'Microsoft Dynamics 365',
   'Workday Financials',
   'QuickBooks Enterprise',
-  'Other',
+  'Other Describe',
 ];
 
 const HR_OPTIONS = [
