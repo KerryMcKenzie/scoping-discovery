@@ -383,7 +383,7 @@ const LoginPage = ({ onLogin }) => {
             fontSize: '24px',
             fontWeight: 700,
           }}>
-            ◆
+            
           </div>
           <h1 style={{
             fontSize: '22px',
@@ -395,7 +395,7 @@ const LoginPage = ({ onLogin }) => {
             Discovery Tool
           </h1>
           <p style={{ fontSize: '14px', color: '#6b7a99', margin: 0 }}>
-            Sign in with your work account
+            Sign in with Demo Credentials User Test, user.test@company.com. This is a simulated SSO login.
           </p>
         </div>
 
