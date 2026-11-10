@@ -452,8 +452,8 @@ const LegalModal = ({ type, onClose }) => {
                 fontSize: '13px',
                 color: '#1a2b4a',
               }}>
-                <div><strong>Name:</strong> User Test</div>
-                <div><strong>Email:</strong> user.test@company.com</div>
+                <div><strong>Email:</strong> test@company.com</div>
+                <div><strong>Password:</strong>12345</div>
               </div>
             )}
           </div>
@@ -492,20 +492,28 @@ const legalLinkStyle = {
   fontFamily: 'inherit',
 };
 
+// Turn "test@company.com" into "User Test" for greetings and reports
+const nameFromEmail = (email) =>
+  email
+    .split('@')[0]
+    .split(/[._-]+/)
+    .filter(Boolean)
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+    .join(' ');
+
 // ---- Login Page -----------------------------------------------------------
 const LoginPage = ({ onLogin }) => {
-  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [legal, setLegal] = useState(null); // 'privacy' | 'terms' | null
-
-  const canSubmit = name.trim().length > 1 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  const canSubmit = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) && password.length > 0;
 
   const handleSubmit = () => {
     if (!canSubmit) return;
     setLoading(true);
     // Simulate federated SSO roundtrip
-    setTimeout(() => onLogin({ name: name.trim(), email: email.trim() }), 700);
+    setTimeout(() => onLogin({ name: nameFromEmail(email.trim()), email: email.trim() }), 700);
   };
 
   return (
@@ -559,7 +567,7 @@ const LoginPage = ({ onLogin }) => {
             height: '56px',
             borderRadius: '12px',
             // background: 'linear-gradient(135deg, #0052D4 0%, #4364F7 50%, #6FB1FC 100%)',
-            margin: '0 auto 16px',
+            margin: '0 auto',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -567,32 +575,34 @@ const LoginPage = ({ onLogin }) => {
             fontSize: '24px',
             fontWeight: 700,
           }}>
-            
+
           </div>
           <h1 style={{
             fontSize: '22px',
             fontWeight: 700,
             color: '#1a2b4a',
-            margin: '0 0 14px',
+            margin: '0 0 22px',
             letterSpacing: '-0.01em',
           }}>
-            Discovery Tool
+            <span style={{ fontSize: '20px', color: '#0c0677' }}>Scoping & Discovery Tool</span>
           </h1>
           <p style={{ fontSize: '14px', color: '#6b7a99', margin: 0 }}>
-            Use Demo Credentials: User Test, user.test@company.com
+            Demo Credentials: test@company.com, any password
           </p>
-           <p style={{ fontSize: '14px', color: '#6b7a99', margin: 0 }}>
+          <p style={{ fontSize: '14px', color: '#6b7a99', margin: 0 }}>
             This is a simulated SSO login
           </p>
         </div>
 
-        <Field label="Full Name" required>
-          <TextInput value={name} onChange={setName} placeholder="User Test" />
+        <Field label="Work Email" required>
+          <TextInput value={email} onChange={setEmail} placeholder="test@company.com" type="email" />
         </Field>
 
-        <Field label="Work Email" required>
-          <TextInput value={email} onChange={setEmail} placeholder="user.test@company.com" type="email" />
+
+        <Field label="Password" required>
+          <TextInput value={password} onChange={setPassword} placeholder="••••••••" type="password" />
         </Field>
+
 
         <button
           onClick={handleSubmit}
@@ -602,7 +612,7 @@ const LoginPage = ({ onLogin }) => {
             padding: '12px',
             marginTop: '8px',
             background: canSubmit
-              ? 'linear-gradient(135deg, #0052D4 0%, #4364F7 50%, #6FB1FC 100%)'
+              ? '#2E8CFF'
               : '#c5ccdd',
             color: '#fff',
             border: 'none',
@@ -655,21 +665,10 @@ const Sidebar = ({ currentSection, onNavigate, user, completionMap, onLogout }) 
     flexShrink: 0,
   }}>
     <div style={{ padding: '0 24px', marginBottom: '32px' }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '6px' }}>
-        <div style={{
-          width: '32px',
-          height: '32px',
-          borderRadius: '8px',
-          background: 'linear-gradient(135deg, #0052D4 0%, #4364F7 50%, #6FB1FC 100%)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          fontSize: '16px',
-          fontWeight: 700,
-        }}>◆</div>
-        <span style={{ fontSize: '16px', fontWeight: 700, letterSpacing: '-0.01em' }}>Discovery Tool</span>
+      <div style={{ fontSize: '16px', fontWeight: 700, letterSpacing: '-0.01em', marginBottom: '6px' }}>
+        Scoping & Discovery Tool
       </div>
-      <div style={{ fontSize: '11px', color: '#8a97b3', marginLeft: '42px', letterSpacing: '0.05em', textTransform: 'uppercase' }}>
+      <div style={{ fontSize: '11px', color: '#8a97b3', letterSpacing: '0.05em', textTransform: 'uppercase' }}>
         BSM Sales Workflow
       </div>
     </div>
@@ -1980,9 +1979,9 @@ const buildPrintableHtml = (data, user) => {
     ${row('Employees', data.employeeCount)}
     ${row('HQ', data.hqLocation)}
     ${(data.contacts || []).filter((c) => c.name || c.title || c.email || c.role).map((c, i) => {
-      const parts = [c.name, c.title, c.role, c.email].filter(Boolean).join(' · ');
-      return row(`Contact ${i + 1}`, parts);
-    }).join('')}
+    const parts = [c.name, c.title, c.role, c.email].filter(Boolean).join(' · ');
+    return row(`Contact ${i + 1}`, parts);
+  }).join('')}
   </table>
 
   <div class="section-title">Foundation & Systems</div>
