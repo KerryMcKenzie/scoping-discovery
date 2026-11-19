@@ -50,16 +50,18 @@
   }
 }
 
+/* Light blue app background edge to edge, even when the computer is in dark mode */
+html,
 body {
   margin: 0;
+  background: #f4f6fb;
+  color-scheme: light;
 }
 
 #root {
-  width: 1126px;
-  max-width: 100%;
-  margin: 0 auto;
+  width: 100%;
+  margin: 0;
   text-align: left;
-  border-inline: 1px solid var(--border);
   min-height: 100svh;
   display: flex;
   flex-direction: column;
