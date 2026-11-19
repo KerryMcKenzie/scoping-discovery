@@ -140,26 +140,42 @@ const SECTIONS = [
 ];
 
 // ---- Reusable input components --------------------------------------------
+// Each Field is 3 rows: label / input / hint (helper text below the input).
+// When Fields sit side by side in a grid, "subgrid" makes them share those rows,
+// so every label, input and hint lines up across the row — even if one label
+// wraps to two lines or only one field has a hint. Outside a grid it simply
+// stacks the three rows.
 const Field = ({ label, required, children, hint }) => (
-  <div style={{ marginBottom: '20px' }}>
+  <div style={{
+    display: 'grid',
+    gridTemplateRows: 'subgrid',
+    gridRow: 'span 3',
+    rowGap: '6px',
+    alignContent: 'start',
+    marginBottom: '20px',
+  }}>
     <label style={{
       display: 'block',
+      alignSelf: 'end',
       fontSize: '13px',
       fontWeight: 600,
       color: '#1a2b4a',
-      marginBottom: '6px',
       letterSpacing: '0.02em',
     }}>
       {label} {required && <span style={{ color: '#e74c3c' }}>*</span>}
     </label>
+    <div>{children}</div>
     {hint && (
-      <div style={{ fontSize: '12px', color: '#6b7a99', marginBottom: '8px', fontStyle: 'italic' }}>
+      <div style={{ fontSize: '12px', color: '#6b7a99', fontStyle: 'italic', lineHeight: 1.4 }}>
         {hint}
       </div>
     )}
-    {children}
   </div>
 );
+
+// Shared height so text inputs, dropdowns and Yes/No buttons line up exactly
+const CONTROL_HEIGHT = '42px';
+const BRAND_BLUE = '#0052D4';
 
 const inputStyle = {
   width: '100%',
@@ -181,7 +197,7 @@ const TextInput = ({ value, onChange, placeholder, type = 'text' }) => (
     value={value || ''}
     onChange={(e) => onChange(e.target.value)}
     placeholder={placeholder}
-    style={inputStyle}
+    style={{ ...inputStyle, height: CONTROL_HEIGHT }}
     onFocus={(e) => { e.target.style.borderColor = '#4364F7'; e.target.style.boxShadow = '0 0 0 3px rgba(67,100,247,0.12)'; }}
     onBlur={(e) => { e.target.style.borderColor = '#d5dcea'; e.target.style.boxShadow = 'none'; }}
   />
@@ -203,7 +219,7 @@ const Select = ({ value, onChange, options, placeholder = 'Select...' }) => (
   <select
     value={value || ''}
     onChange={(e) => onChange(e.target.value)}
-    style={{ ...inputStyle, cursor: 'pointer' }}
+    style={{ ...inputStyle, height: CONTROL_HEIGHT, cursor: 'pointer' }}
     onFocus={(e) => { e.target.style.borderColor = '#4364F7'; e.target.style.boxShadow = '0 0 0 3px rgba(67,100,247,0.12)'; }}
     onBlur={(e) => { e.target.style.borderColor = '#d5dcea'; e.target.style.boxShadow = 'none'; }}
   >
@@ -270,9 +286,10 @@ const YesNo = ({ value, onChange }) => (
           onClick={() => onChange(opt)}
           style={{
             flex: 1,
-            padding: '10px 16px',
-            border: `1px solid ${active ? '#4364F7' : '#d5dcea'}`,
-            background: active ? 'linear-gradient(135deg, #0052D4 0%, #4364F7 50%, #6FB1FC 100%)' : '#fff',
+            height: CONTROL_HEIGHT,
+            padding: '0 16px',
+            border: `1px solid ${active ? BRAND_BLUE : '#d5dcea'}`,
+            background: active ? BRAND_BLUE : '#fff',
             color: active ? '#fff' : '#1a2b4a',
             borderRadius: '6px',
             fontSize: '14px',
@@ -465,7 +482,7 @@ const LegalModal = ({ type, onClose }) => {
             width: '100%',
             marginTop: '4px',
             padding: '10px',
-            background: 'linear-gradient(135deg, #0052D4 0%, #4364F7 50%, #6FB1FC 100%)',
+            background: BRAND_BLUE,
             color: '#fff',
             border: 'none',
             borderRadius: '6px',
@@ -566,7 +583,7 @@ const LoginPage = ({ onLogin }) => {
             width: '56px',
             height: '56px',
             borderRadius: '12px',
-            // background: 'linear-gradient(135deg, #0052D4 0%, #4364F7 50%, #6FB1FC 100%)',
+            // background: BRAND_BLUE,
             margin: '0 auto',
             display: 'flex',
             alignItems: 'center',
@@ -825,7 +842,7 @@ const NavButtons = ({ onBack, onNext, nextLabel = 'Continue', backLabel = 'Back'
       onClick={onNext}
       style={{
         padding: '10px 24px',
-        background: 'linear-gradient(135deg, #0052D4 0%, #4364F7 50%, #6FB1FC 100%)',
+        background: BRAND_BLUE,
         color: '#fff',
         border: 'none',
         borderRadius: '6px',
@@ -910,7 +927,7 @@ const WelcomeSection = ({ user, onNext }) => (
             width: '36px',
             height: '36px',
             borderRadius: '8px',
-            background: 'linear-gradient(135deg, #0052D4 0%, #4364F7 50%, #6FB1FC 100%)',
+            background: BRAND_BLUE,
             color: '#fff',
             display: 'flex',
             alignItems: 'center',
@@ -1654,6 +1671,10 @@ const ReviewSection = ({ data, update, user, onBack, onSubmit }) => {
   const handlePdfExport = () => {
     // Use window.print() - clean solution that works in any browser
     const printWindow = window.open('', '_blank');
+    if (!printWindow) {
+      alert('Please allow pop-ups for this site to generate the PDF.');
+      return;
+    }
     const reportHtml = buildPrintableHtml(data, user);
     printWindow.document.write(reportHtml);
     printWindow.document.close();
@@ -1673,9 +1694,17 @@ const ReviewSection = ({ data, update, user, onBack, onSubmit }) => {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `discovery-${(data.companyName || 'untitled').replace(/\s+/g, '-').toLowerCase()}.json`;
+    // Only letters, numbers and dashes in the file name — no slashes, dots or
+    // other characters that could make an odd or misleading file name.
+    const safeName = (data.companyName || 'untitled')
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '')
+      .slice(0, 60) || 'untitled';
+    a.download = `discovery-${safeName}.json`;
     a.click();
-    URL.revokeObjectURL(url);
+    // Revoke after the download has started (revoking immediately can cancel it in some browsers)
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
   };
 
   const handleSalesforceAttach = () => {
@@ -1769,7 +1798,7 @@ const ReviewSection = ({ data, update, user, onBack, onSubmit }) => {
             disabled={exportStatus === 'attaching'}
             style={{
               padding: '10px 18px',
-              background: 'linear-gradient(135deg, #0052D4 0%, #4364F7 50%, #6FB1FC 100%)',
+              background: BRAND_BLUE,
               color: '#fff',
               border: 'none',
               borderRadius: '6px',
@@ -1935,6 +1964,17 @@ const SummaryCard = ({ data, user }) => {
 };
 
 // ---- Printable HTML builder (for PDF export) ------------------------------
+// SECURITY: every value typed by a user must be escaped before it goes into
+// HTML. Without this, typing e.g. <img src=x onerror=alert(1)> into any field
+// would run as code in the PDF window.
+const escapeHtml = (value) =>
+  String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+
 const buildPrintableHtml = (data, user) => {
   const fmt = (v) => {
     if (!v) return '—';
@@ -1946,13 +1986,16 @@ const buildPrintableHtml = (data, user) => {
   const row = (label, value) => {
     const v = fmt(value);
     if (v === '—') return '';
-    return `<tr><td style="padding:6px 12px 6px 0;color:#6b7a99;font-size:12px;vertical-align:top;width:200px;">${label}</td><td style="padding:6px 0;color:#1a2b4a;font-size:12px;">${String(v).replace(/\n/g, '<br>')}</td></tr>`;
+    return `<tr><td style="padding:6px 12px 6px 0;color:#6b7a99;font-size:12px;vertical-align:top;width:200px;">${escapeHtml(label)}</td><td style="padding:6px 0;color:#1a2b4a;font-size:12px;">${escapeHtml(v).replace(/\n/g, '<br>')}</td></tr>`;
   };
+  const esc = escapeHtml;
 
   return `<!DOCTYPE html>
 <html>
 <head>
-<title>Discovery Report — ${data.companyName || 'Untitled'}</title>
+<meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'">
+<title>Discovery Report — ${esc(data.companyName || 'Untitled')}</title>
 <style>
   @page { margin: 0.6in; }
   body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; color: #1a2b4a; line-height: 1.4; }
@@ -1966,8 +2009,8 @@ const buildPrintableHtml = (data, user) => {
 </head>
 <body>
   <div class="hdr">
-    <h1>${data.companyName || 'Untitled Discovery'}</h1>
-    <p>${data.industry || ''} · Submitted by ${user.name} (${user.email}) on ${new Date().toLocaleDateString()}</p>
+    <h1>${esc(data.companyName || 'Untitled Discovery')}</h1>
+    <p>${esc(data.industry || '')} · Submitted by ${esc(user.name)} (${esc(user.email)}) on ${new Date().toLocaleDateString()}</p>
   </div>
 
   <div class="section-title">Company</div>
@@ -2051,7 +2094,7 @@ const buildPrintableHtml = (data, user) => {
 
   ${data.salesNotes ? `
     <div class="section-title">Additional Sales Notes</div>
-    <div class="notes-box">${data.salesNotes}</div>
+    <div class="notes-box">${esc(data.salesNotes)}</div>
   ` : ''}
 </body>
 </html>`;

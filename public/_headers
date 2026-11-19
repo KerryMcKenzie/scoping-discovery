@@ -1,0 +1,13 @@
+# Netlify security headers — applied to every page on the site.
+# Vite copies this file into dist/, where Netlify picks it up on deploy.
+/*
+  # Only run scripts/styles/images from this site; block plugins, framing and outside form posts.
+  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'
+  # Don't let other sites embed this app in a frame (clickjacking protection).
+  X-Frame-Options: DENY
+  # Browsers must trust the file type the server sends (stops "MIME sniffing").
+  X-Content-Type-Options: nosniff
+  # Don't leak full page URLs to other sites.
+  Referrer-Policy: strict-origin-when-cross-origin
+  # The app needs none of these browser features.
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=()
