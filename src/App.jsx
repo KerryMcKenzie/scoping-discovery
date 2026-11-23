@@ -641,7 +641,7 @@ const LoginPage = ({ onLogin }) => {
             opacity: loading ? 0.7 : 1,
           }}
         >
-          {loading ? 'Authenticating…' : 'Sign in with SSO'}
+          {loading ? 'Authenticating…' : 'Sign in'}
         </button>
 
         <div style={{
