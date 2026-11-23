@@ -664,7 +664,7 @@ const LoginPage = ({ onLogin }) => {
           color: '#8a97b3',
           textAlign: 'center',
         }}>
-          Secured by Federated Identity · Demo Environment
+          Secured by Netlify · Demo Environment
           <div style={{ marginTop: '10px' }}>
             <button type="button" style={legalLinkStyle} onClick={() => setLegal('privacy')}>
               Privacy Policy
