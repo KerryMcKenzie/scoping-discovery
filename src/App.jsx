@@ -595,14 +595,26 @@ const LoginPage = ({ onLogin }) => {
 
           </div>
           <h1 style={{
-            fontSize: '22px',
-            fontWeight: 700,
-            color: '#1a2b4a',
-            margin: '0 0 22px',
-            letterSpacing: '-0.01em',
+            fontSize: '26px',
+            fontWeight: 800,
+            color: '#0c0677',
+            margin: '0 0 10px',
+            letterSpacing: '-0.02em',
+            lineHeight: 1.2,
           }}>
-            <span style={{ fontSize: '20px', color: '#0c0677' }}>Scoping & Discovery Tool</span>
+            Scoping{' '}
+            <span style={{ color: BRAND_BLUE, fontWeight: 600 }}>&amp;</span>{' '}
+            Discovery{' '}
+            <span style={{ fontWeight: 400, color: '#4a5878' }}>Tool</span>
           </h1>
+          {/* Short accent bar under the title */}
+          <div style={{
+            width: '40px',
+            height: '3px',
+            borderRadius: '2px',
+            background: BRAND_BLUE,
+            margin: '0 auto 20px',
+          }} />
           <p style={{ fontSize: '14px', color: '#6b7a99', margin: 0 }}>
             Demo Credentials: test@company.com, any password
           </p>
