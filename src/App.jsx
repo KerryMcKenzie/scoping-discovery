@@ -520,17 +520,20 @@ const nameFromEmail = (email) =>
 
 // ---- Login Page -----------------------------------------------------------
 const LoginPage = ({ onLogin }) => {
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [legal, setLegal] = useState(null); // 'privacy' | 'terms' | null
-  const canSubmit = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) && password.length > 0;
+  // Any user name (e.g. "demo") or an email address, at least 2 characters
+  const canSubmit = username.trim().length >= 2 && password.length > 0;
 
   const handleSubmit = () => {
     if (!canSubmit) return;
     setLoading(true);
     // Simulate federated SSO roundtrip
-    setTimeout(() => onLogin({ name: nameFromEmail(email.trim()), email: email.trim() }), 700);
+    const u = username.trim();
+    // "demo" → name "Demo"; "user.test@company.com" → name "User Test" + email
+    setTimeout(() => onLogin({ name: nameFromEmail(u), email: u.includes('@') ? u : '' }), 700);
   };
 
   return (
@@ -616,15 +619,15 @@ const LoginPage = ({ onLogin }) => {
             margin: '0 auto 20px',
           }} />
           <p style={{ fontSize: '14px', color: '#6b7a99', margin: 0 }}>
-            Demo Credentials: test@company.com, any password
+            Email kmckenzie.tech@gmail.com for Demo Credentials:
           </p>
           <p style={{ fontSize: '14px', color: '#6b7a99', margin: 0 }}>
             This is a simulated SSO login
           </p>
         </div>
 
-        <Field label="Work Email" required>
-          <TextInput value={email} onChange={setEmail} placeholder="test@company.com" type="email" />
+        <Field label="User Name" required>
+          <TextInput value={username} onChange={setUsername} placeholder="demo" type="text" />
         </Field>
 
 
@@ -772,7 +775,7 @@ const Sidebar = ({ currentSection, onNavigate, user, completionMap, onLogout }) 
       fontSize: '13px',
     }}>
       <div style={{ fontWeight: 600, marginBottom: '2px' }}>{user.name}</div>
-      <div style={{ fontSize: '11px', color: '#8a97b3', marginBottom: '10px' }}>{user.email}</div>
+      <div style={{ fontSize: '11px', color: '#8a97b3', marginBottom: '10px' }}>{user.email || ' '}</div>
       <button
         onClick={onLogout}
         style={{
@@ -1897,7 +1900,7 @@ const SummaryCard = ({ data, user }) => {
           Submitted by
         </div>
         <div style={{ fontSize: '14px', color: '#1a2b4a', fontWeight: 600 }}>
-          {user.name} · {user.email}
+          {user.name}{user.email && ` · ${user.email}`}
         </div>
       </div>
 
@@ -2022,7 +2025,7 @@ const buildPrintableHtml = (data, user) => {
 <body>
   <div class="hdr">
     <h1>${esc(data.companyName || 'Untitled Discovery')}</h1>
-    <p>${esc(data.industry || '')} · Submitted by ${esc(user.name)} (${esc(user.email)}) on ${new Date().toLocaleDateString()}</p>
+    <p>${esc(data.industry || '')} · Submitted by ${esc(user.name)}${user.email ? ` (${esc(user.email)})` : ''} on ${new Date().toLocaleDateString()}</p>
   </div>
 
   <div class="section-title">Company</div>
