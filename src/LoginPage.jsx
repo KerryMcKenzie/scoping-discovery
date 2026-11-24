@@ -307,17 +307,17 @@ const LoginPage = ({ onLogin }) => {
             margin: '0 auto 20px',
           }} />
           <p style={{ fontSize: '14px', color: '#6b7a99', margin: 0 }}>
-            Email kmckenzie.tech@gmail.com for Demo Credentials:
+               Sign in with the user name and password provided.
           </p>
           <p style={{ fontSize: '14px', color: '#6b7a99', margin: 0 }}>
-            This is a simulated SSO login
+            {/* This is a simulated SSO login */}
           </p>
         </div>
 
         {/* A real <form> so pressing Enter signs in */}
         <form onSubmit={handleSubmit}>
         <Field label="User Name" required>
-          <TextInput value={username} onChange={setUsername} placeholder="demo" type="text" />
+          <TextInput value={username} onChange={setUsername} placeholder="User name" type="text" />
         </Field>
 
         <Field label="Password" required>
