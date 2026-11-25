@@ -270,11 +270,13 @@ const LoginPage = ({ onLogin }) => {
         zIndex: 1,
       }}>
         <div style={{ textAlign: 'center', marginBottom: '32px' }}>
+          { 
+            /* -- creates the div box for logo -- 
           <div style={{
             width: '56px',
             height: '56px',
             borderRadius: '12px',
-            // background: BRAND_BLUE,
+            background: BRAND_BLUE,
             margin: '0 auto',
             display: 'flex',
             alignItems: 'center',
@@ -284,7 +286,7 @@ const LoginPage = ({ onLogin }) => {
             fontWeight: 700,
           }}>
 
-          </div>
+          </div> */}
           <h1 style={{
             fontSize: '26px',
             fontWeight: 800,
@@ -307,7 +309,7 @@ const LoginPage = ({ onLogin }) => {
             margin: '0 auto 20px',
           }} />
           <p style={{ fontSize: '14px', color: '#6b7a99', margin: 0 }}>
-               Sign in with the user name and password provided.
+            Sign in with the user name and password provided.
           </p>
           <p style={{ fontSize: '14px', color: '#6b7a99', margin: 0 }}>
             {/* This is a simulated SSO login */}
@@ -316,50 +318,50 @@ const LoginPage = ({ onLogin }) => {
 
         {/* A real <form> so pressing Enter signs in */}
         <form onSubmit={handleSubmit}>
-        <Field label="User Name" required>
-          <TextInput value={username} onChange={setUsername} placeholder="User name" type="text" />
-        </Field>
+          <Field label="User Name" required>
+            <TextInput value={username} onChange={setUsername} placeholder="User name" type="text" />
+          </Field>
 
-        <Field label="Password" required>
-          <TextInput value={password} onChange={setPassword} placeholder="••••••••" type="password" />
-        </Field>
+          <Field label="Password" required>
+            <TextInput value={password} onChange={setPassword} placeholder="••••••••" type="password" />
+          </Field>
 
-        {error && (
-          <div role="alert" style={{
-            margin: '-4px 0 12px',
-            padding: '10px 12px',
-            background: '#fdecea',
-            border: '1px solid #f5c2bd',
-            borderRadius: '6px',
-            color: '#a3261b',
-            fontSize: '13px',
-          }}>
-            {error}
-          </div>
-        )}
+          {error && (
+            <div role="alert" style={{
+              margin: '-4px 0 12px',
+              padding: '10px 12px',
+              background: '#fdecea',
+              border: '1px solid #f5c2bd',
+              borderRadius: '6px',
+              color: '#a3261b',
+              fontSize: '13px',
+            }}>
+              {error}
+            </div>
+          )}
 
-        <button
-          type="submit"
-          disabled={!canSubmit || loading}
-          style={{
-            width: '100%',
-            padding: '12px',
-            marginTop: '8px',
-            background: canSubmit
-              ? '#2E8CFF'
-              : '#c5ccdd',
-            color: '#fff',
-            border: 'none',
-            borderRadius: '6px',
-            fontSize: '15px',
-            fontWeight: 600,
-            cursor: canSubmit ? 'pointer' : 'not-allowed',
-            transition: 'opacity 0.15s',
-            opacity: loading ? 0.7 : 1,
-          }}
-        >
-          {loading ? 'Authenticating…' : 'Sign in'}
-        </button>
+          <button
+            type="submit"
+            disabled={!canSubmit || loading}
+            style={{
+              width: '100%',
+              padding: '12px',
+              marginTop: '8px',
+              background: canSubmit
+                ? '#2E8CFF'
+                : '#c5ccdd',
+              color: '#fff',
+              border: 'none',
+              borderRadius: '6px',
+              fontSize: '15px',
+              fontWeight: 600,
+              cursor: canSubmit ? 'pointer' : 'not-allowed',
+              transition: 'opacity 0.15s',
+              opacity: loading ? 0.7 : 1,
+            }}
+          >
+            {loading ? 'Authenticating…' : 'Sign in'}
+          </button>
         </form>
 
         <div style={{
